@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from '@/providers/ThemeProvider';
+import { Toaster } from '@/components/ui/toaster';
 
 import './globals.css';
 
@@ -26,6 +27,7 @@ export default function RootLayout({
 				<body className={`${inter.variable} antialiased`}>
 					<ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
 						{children}
+						<Toaster />
 					</ThemeProvider>
 				</body>
 			</html>

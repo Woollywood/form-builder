@@ -6,7 +6,7 @@ import { ThemeSwitcher } from '@/components/shared/ThemeSwitcher';
 
 const Layout: NextPage<React.PropsWithChildren> = ({ children }) => {
 	return (
-		<div className='flex max-h-screen min-h-screen min-w-full flex-col bg-background'>
+		<div className='container flex max-h-screen min-h-screen min-w-full flex-col bg-background'>
 			<nav className='border-border flex h-[3.75rem] items-center justify-between border-b px-4 py-2'>
 				<Logo />
 				<div className='flex items-center gap-x-4'>
