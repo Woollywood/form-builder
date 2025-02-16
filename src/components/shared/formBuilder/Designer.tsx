@@ -34,7 +34,13 @@ export const Designer: React.FC = observer(() => {
 
 	return (
 		<div className='grid size-full grid-cols-[6fr_2fr]'>
-			<div className='size-full p-4'>
+			<div
+				className='size-full p-4'
+				onClick={() => {
+					if (formBuilderStore.selectedElement) {
+						formBuilderStore.selectedElement = null;
+					}
+				}}>
 				<div
 					className={cn(
 						'flex size-full flex-col items-center justify-start overflow-y-auto rounded-xl bg-background',

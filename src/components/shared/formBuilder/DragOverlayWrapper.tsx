@@ -41,7 +41,7 @@ export const DragOverlayWrapper: React.FC = () => {
 		if (!element) {
 			node = <div>Element not found</div>;
 		} else {
-			const DesignerElementComponent = formElements[element.type].designerComponent;
+			const DesignerElementComponent = formElements[element.type].DesignerComponent;
 			node = (
 				<div className='pointer-events-none flex h-[7.5rem] w-full rounded-md border bg-accent px-4 py-2 opacity-60'>
 					<DesignerElementComponent elementInstance={element} />{' '}

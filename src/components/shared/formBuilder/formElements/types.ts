@@ -9,9 +9,9 @@ export interface FormElement {
 		icon: IconType;
 		label: string;
 	};
-	designerComponent: React.FC<{ elementInstance: FormElementInstance }>;
-	formComponent: React.FC;
-	propertiesComponent: React.FC;
+	DesignerComponent: React.FC<{ elementInstance: FormElementInstance }>;
+	FormComponent: React.FC;
+	PropertiesComponent: React.FC<{ elementInstance: FormElementInstance }>;
 }
 export interface FormElementInstance {
 	id: string;

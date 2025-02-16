@@ -38,7 +38,7 @@ export const DesignerElementWrapper: React.FC<DesignerElementWrapperProps> = (el
 		return null;
 	}
 
-	const DesignerComponent = formElements[type].designerComponent;
+	const DesignerComponent = formElements[type].DesignerComponent;
 	return (
 		<div
 			className='relative flex h-[7.5rem] flex-col rounded-md text-foreground ring-1 ring-inset ring-accent hover:cursor-pointer'
@@ -46,7 +46,11 @@ export const DesignerElementWrapper: React.FC<DesignerElementWrapperProps> = (el
 			onMouseLeave={() => setMouseOver(false)}
 			ref={draggable.setNodeRef}
 			{...draggable.listeners}
-			{...draggable.attributes}>
+			{...draggable.attributes}
+			onClick={(e) => {
+				e.stopPropagation();
+				formBuilderStore.selectedElement = element;
+			}}>
 			<div className='absolute h-1/2 w-full rounded-t-md' ref={topHalf.setNodeRef}></div>
 			<div className='absolute bottom-0 h-1/2 w-full rounded-b-md' ref={bottomHalf.setNodeRef}></div>
 			{isMouseOver && (
@@ -54,7 +58,10 @@ export const DesignerElementWrapper: React.FC<DesignerElementWrapperProps> = (el
 					<div className='absolute right-0 h-full'>
 						<Button
 							className='rounded- border-md flex h-full items-center justify-center rounded-l-none bg-red-500'
-							onClick={() => formBuilderStore.removeElement(id)}>
+							onClick={(e) => {
+								e.stopPropagation();
+								formBuilderStore.removeElement(id);
+							}}>
 							<BiSolidTrash className='size-6' />
 						</Button>
 					</div>
