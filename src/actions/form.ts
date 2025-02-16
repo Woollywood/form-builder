@@ -47,3 +47,9 @@ export const getForms = async () => {
 
 	return await prisma.form.findMany({ where: { userId }, orderBy: { createdAt: 'desc' } });
 };
+
+export const getFormById = async (id: string) => {
+	const { id: userId } = await checkUser();
+
+	return await prisma.form.findUnique({ where: { id, userId } });
+};
