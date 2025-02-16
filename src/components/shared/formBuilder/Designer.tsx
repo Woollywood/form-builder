@@ -24,10 +24,49 @@ export const Designer: React.FC = observer(() => {
 			}
 
 			const isDesignerButtonElement = active.data.current?.isDesignerButtonElement;
-			if (isDesignerButtonElement) {
+			const isDroppingOverDesignerDropArea = over.data.current?.isDesignerDropArea;
+
+			if (isDesignerButtonElement && isDroppingOverDesignerDropArea) {
 				const type = active.data.current?.type;
 				const newElement = formElements[type as ElementsType].construct(uuid());
-				formBuilderStore.addElement(0, newElement);
+				formBuilderStore.addElement(formBuilderStore.elements.length, newElement);
+				return;
+			}
+
+			const isDroppingOverDesignerElementTopHalf = over.data.current?.isTopHalfDesignerElement;
+			const isDroppingOverDesignerElementBottomHalf = over.data.current?.isBottomHalfDesignerElement;
+			const isDroppingOverDesignerElement =
+				isDroppingOverDesignerElementTopHalf || isDroppingOverDesignerElementBottomHalf;
+			const droppingSidebarButtonOverDesignerElement = isDesignerButtonElement && isDroppingOverDesignerElement;
+			if (droppingSidebarButtonOverDesignerElement) {
+				const type = active.data.current?.type;
+				const newElement = formElements[type as ElementsType].construct(uuid());
+
+				const overId = over.data.current?.elementId;
+				const overElementIndex = formBuilderStore.elements.findIndex((el) => el.id === overId);
+				if (overElementIndex === -1) {
+					throw new Error('Element not found');
+				}
+
+				const index = isDroppingOverDesignerElementTopHalf ? overElementIndex : overElementIndex + 1;
+				formBuilderStore.addElement(index, newElement);
+				return;
+			}
+
+			const isDraggingDesignerElement = active.data.current?.isDesignerElement;
+			const draggingDesignerElement = isDroppingOverDesignerElement && isDraggingDesignerElement;
+			if (draggingDesignerElement) {
+				const activeId = active.data.current?.elementId;
+				const overId = over.data.current?.elementId;
+				const activeElementIndex = formBuilderStore.elements.findIndex((element) => element.id === activeId);
+				const overElementIndex = formBuilderStore.elements.findIndex((element) => element.id === overId);
+				if (activeElementIndex === -1 || overElementIndex === -1) {
+					throw new Error('Element not found');
+				}
+				const activeElement = { ...formBuilderStore.elements[activeElementIndex] };
+				formBuilderStore.removeElement(activeId);
+				const index = isDroppingOverDesignerElementTopHalf ? overElementIndex : overElementIndex + 1;
+				formBuilderStore.addElement(index, activeElement);
 			}
 		},
 	});
@@ -44,7 +83,7 @@ export const Designer: React.FC = observer(() => {
 				<div
 					className={cn(
 						'flex size-full flex-col items-center justify-start overflow-y-auto rounded-xl bg-background',
-						{ 'ring-2 ring-primary': isOver },
+						{ 'ring-4 ring-inset ring-primary': isOver },
 					)}
 					ref={setNodeRef}>
 					{formBuilderStore.elements.length === 0 && isOver ? (
