@@ -30,13 +30,13 @@ export const StatCards: React.FC<Props> = async ({ visits, submissions }) => {
 		{
 			title: 'Submission rate',
 			description: 'Visits that result in form submission',
-			value: String(submissionRate) + '%',
+			value: submissionRate.toFixed(2) + '%',
 			icon: <HiCursorClick className='text-green-600' />,
 		},
 		{
 			title: 'Bounce rate',
 			description: 'Visits that leaves without interacting',
-			value: String(bounceRate) + '%',
+			value: bounceRate.toFixed(2) + '%',
 			icon: <TbArrowBounce className='text-red-600' />,
 		},
 	];

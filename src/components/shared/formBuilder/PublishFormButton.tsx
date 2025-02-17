@@ -18,7 +18,8 @@ import { FaIcons } from 'react-icons/fa';
 import { useHandleError } from '@/hooks/useHandleError';
 import { useToast } from '@/hooks/use-toast';
 import { useParams } from 'next/navigation';
-import { publishForm } from '@/actions/form';
+import { publishForm, updateFormContent } from '@/actions/form';
+import { formBuilderStore } from './store';
 
 export const PublishFormButton: React.FC = () => {
 	const [open, setOpen] = useState(false);
@@ -29,6 +30,8 @@ export const PublishFormButton: React.FC = () => {
 	const { handleError } = useHandleError();
 	const onSubmit = async () => {
 		try {
+			const jsonContent = JSON.stringify(formBuilderStore.elements);
+			await updateFormContent(id, jsonContent);
 			await publishForm(id);
 			setOpen(false);
 			toast({

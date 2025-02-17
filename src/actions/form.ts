@@ -77,3 +77,18 @@ export const publishForm = async (id: string) => {
 	revalidatePath('/', 'layout');
 	return data;
 };
+
+export const getFormContentByURL = async (url: string) => {
+	return await prisma.form.update({
+		select: { content: true },
+		data: { visits: { increment: 1 } },
+		where: { shareURL: url },
+	});
+};
+
+export const submitForm = async (formURL: string, content: string) => {
+	return await prisma.form.update({
+		data: { submissions: { increment: 1 }, FormSubmissions: { create: { content } } },
+		where: { shareURL: formURL },
+	});
+};
