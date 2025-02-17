@@ -9,6 +9,7 @@ import { NumberField } from './NumberField';
 import { TextareaField } from './TextareaField';
 import { DateField } from './DateField';
 import { SelectField } from './SelectField';
+import { CheckboxField } from './CheckboxField';
 
 export const formElements: FormElementsType = {
 	title: TitleField,
@@ -22,10 +23,11 @@ export const formElements: FormElementsType = {
 	textarea: TextareaField,
 	date: DateField,
 	select: SelectField,
+	checkbox: CheckboxField,
 };
 
 export type LayoutElements = Extract<ElementsType, 'title' | 'subtitle' | 'paragraph' | 'separator' | 'spacer'>;
-export type FormElements = Extract<ElementsType, 'text' | 'number' | 'textarea' | 'date' | 'select'>;
+export type FormElements = Extract<ElementsType, 'text' | 'number' | 'textarea' | 'date' | 'select' | 'checkbox'>;
 export interface Section<T extends string> {
 	label: string;
 	elements: Record<T, FormElement>;
@@ -51,6 +53,7 @@ export const sections: SidebarSections = [
 			textarea: TextareaField,
 			date: DateField,
 			select: SelectField,
+			checkbox: CheckboxField,
 		},
 	},
 ];

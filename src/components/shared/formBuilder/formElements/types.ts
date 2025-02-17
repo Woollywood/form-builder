@@ -11,7 +11,8 @@ export type ElementsType =
 	| 'number'
 	| 'textarea'
 	| 'date'
-	| 'select';
+	| 'select'
+	| 'checkbox';
 export type SubmitFunction = (key: string, value: string) => void;
 export interface FormElement {
 	type: ElementsType;
