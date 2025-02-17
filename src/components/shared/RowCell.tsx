@@ -1,6 +1,9 @@
 import React from 'react';
+import moment from 'moment';
 import { ElementsType } from './formBuilder/formElements/types';
 import { TableCell } from '../ui/table';
+import { Badge } from '../ui/badge';
+import { Checkbox } from '../ui/checkbox';
 
 interface Props {
 	type: ElementsType;
@@ -8,7 +11,24 @@ interface Props {
 }
 
 export const RowCell: React.FC<Props> = ({ type, value }) => {
-	console.log(type);
+	let node: React.ReactNode = value;
 
-	return <TableCell>{value}</TableCell>;
+	switch (type) {
+		case 'date':
+			if (!value) {
+				break;
+			}
+
+			const date = new Date(value);
+			node = <Badge variant='outline'>{moment(date).format('LL')}</Badge>;
+			break;
+		case 'checkbox':
+			const checked = value === 'true';
+			node = <Checkbox checked={checked} disabled />;
+			break;
+		default:
+			break;
+	}
+
+	return <TableCell>{node}</TableCell>;
 };

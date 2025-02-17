@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { MdTextFields } from 'react-icons/md';
 import { ElementsType, FormElement, FormElementInstance } from './types';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -13,12 +12,13 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
+import { Bs123 } from 'react-icons/bs';
 
 const extraAttributes = {
-	label: 'Text field',
+	label: 'Number field',
 	description: 'Description',
 	required: false,
-	placeholder: 'Value here...',
+	placeholder: '0',
 };
 
 const propertiesSchema = z.object({
@@ -29,8 +29,8 @@ const propertiesSchema = z.object({
 });
 type PropertiesSchema = z.infer<typeof propertiesSchema>;
 
-const type: ElementsType = 'text';
-export const TextField: FormElement = {
+const type: ElementsType = 'number';
+export const NumberField: FormElement = {
 	type,
 	construct: (id) => ({
 		id,
@@ -38,8 +38,8 @@ export const TextField: FormElement = {
 		extraAttributes,
 	}),
 	designerButtonElement: {
-		icon: MdTextFields,
-		label: 'Text field',
+		icon: Bs123,
+		label: 'Number field',
 	},
 	DesignerComponent: ({ elementInstance }) => {
 		const {
@@ -51,7 +51,7 @@ export const TextField: FormElement = {
 					{label}
 					{required && '*'}
 				</Label>
-				<Input readOnly disabled placeholder={placeholder} />
+				<Input type='number' readOnly disabled placeholder={placeholder} />
 				{description && <p className='text-[0.8rem] text-muted-foreground'>{description}</p>}
 			</div>
 		);
@@ -73,7 +73,7 @@ export const TextField: FormElement = {
 				return;
 			}
 
-			const valid = TextField.validate(elementInstance, e.target.value);
+			const valid = NumberField.validate(elementInstance, e.target.value);
 			setError(!valid);
 			if (!valid) {
 				return;
@@ -89,6 +89,7 @@ export const TextField: FormElement = {
 					{required && '*'}
 				</Label>
 				<Input
+					type='number'
 					className={cn({ 'text-red-500': error })}
 					placeholder={placeholder}
 					value={value}

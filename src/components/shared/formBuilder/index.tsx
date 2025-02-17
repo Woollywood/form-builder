@@ -21,6 +21,7 @@ export const FormBuilder: React.FC<Props> = ({ name, published, content }) => {
 		if (content) {
 			const elements = JSON.parse(content);
 			formBuilderStore.elements = elements;
+			formBuilderStore.selectedElement = null;
 		}
 	}, [content]);
 

@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { MdTextFields } from 'react-icons/md';
 import { ElementsType, FormElement, FormElementInstance } from './types';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -13,12 +12,15 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
+import { BsTextareaResize } from 'react-icons/bs';
+import { Slider } from '@/components/ui/slider';
 
 const extraAttributes = {
-	label: 'Text field',
+	label: 'Textarea field',
 	description: 'Description',
 	required: false,
 	placeholder: 'Value here...',
+	rows: 6,
 };
 
 const propertiesSchema = z.object({
@@ -26,11 +28,12 @@ const propertiesSchema = z.object({
 	description: z.string().max(200),
 	required: z.boolean().default(false),
 	placeholder: z.string().max(50),
+	rows: z.number().min(1).max(10),
 });
 type PropertiesSchema = z.infer<typeof propertiesSchema>;
 
-const type: ElementsType = 'text';
-export const TextField: FormElement = {
+const type: ElementsType = 'textarea';
+export const TextareaField: FormElement = {
 	type,
 	construct: (id) => ({
 		id,
@@ -38,8 +41,8 @@ export const TextField: FormElement = {
 		extraAttributes,
 	}),
 	designerButtonElement: {
-		icon: MdTextFields,
-		label: 'Text field',
+		icon: BsTextareaResize,
+		label: 'Textarea field',
 	},
 	DesignerComponent: ({ elementInstance }) => {
 		const {
@@ -51,7 +54,7 @@ export const TextField: FormElement = {
 					{label}
 					{required && '*'}
 				</Label>
-				<Input readOnly disabled placeholder={placeholder} />
+				<Textarea readOnly disabled placeholder={placeholder} />
 				{description && <p className='text-[0.8rem] text-muted-foreground'>{description}</p>}
 			</div>
 		);
@@ -59,7 +62,7 @@ export const TextField: FormElement = {
 	FormComponent: ({ elementInstance, isInvalid, defaultValue, submitValue }) => {
 		const {
 			id,
-			extraAttributes: { label, required, placeholder, description },
+			extraAttributes: { label, required, placeholder, description, rows },
 		} = elementInstance as CustomInstance;
 		const [value, setValue] = useState(defaultValue || '');
 		const [error, setError] = useState(false);
@@ -68,12 +71,12 @@ export const TextField: FormElement = {
 			setError(isInvalid!);
 		}, [isInvalid]);
 
-		const onBlur = (e: React.FocusEvent<HTMLInputElement, Element>) => {
+		const onBlur = (e: React.FocusEvent<HTMLTextAreaElement, Element>) => {
 			if (!submitValue) {
 				return;
 			}
 
-			const valid = TextField.validate(elementInstance, e.target.value);
+			const valid = TextareaField.validate(elementInstance, e.target.value);
 			setError(!valid);
 			if (!valid) {
 				return;
@@ -88,7 +91,8 @@ export const TextField: FormElement = {
 					{label}
 					{required && '*'}
 				</Label>
-				<Input
+				<Textarea
+					rows={rows}
 					className={cn({ 'text-red-500': error })}
 					placeholder={placeholder}
 					value={value}
@@ -182,6 +186,25 @@ export const TextField: FormElement = {
 								<FormDescription>
 									The description of the field <br /> It will be displayed below the field
 								</FormDescription>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={control}
+						name='rows'
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Rows {form.watch('rows')}</FormLabel>
+								<FormControl>
+									<Slider
+										defaultValue={[field.value]}
+										min={1}
+										max={10}
+										step={1}
+										onValueChange={(value) => field.onChange(value[0])}
+									/>
+								</FormControl>
 								<FormMessage />
 							</FormItem>
 						)}

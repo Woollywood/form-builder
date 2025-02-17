@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { MdTextFields } from 'react-icons/md';
+import moment from 'moment';
 import { ElementsType, FormElement, FormElementInstance } from './types';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -13,24 +13,27 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
+import { BsFillCalendarDateFill } from 'react-icons/bs';
+import { Button } from '@/components/ui/button';
+import { CalendarIcon } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
 
 const extraAttributes = {
-	label: 'Text field',
-	description: 'Description',
+	label: 'Date field',
+	description: 'Pick a date',
 	required: false,
-	placeholder: 'Value here...',
 };
 
 const propertiesSchema = z.object({
 	label: z.string().min(2).max(50),
 	description: z.string().max(200),
 	required: z.boolean().default(false),
-	placeholder: z.string().max(50),
 });
 type PropertiesSchema = z.infer<typeof propertiesSchema>;
 
-const type: ElementsType = 'text';
-export const TextField: FormElement = {
+const type: ElementsType = 'date';
+export const DateField: FormElement = {
 	type,
 	construct: (id) => ({
 		id,
@@ -38,12 +41,12 @@ export const TextField: FormElement = {
 		extraAttributes,
 	}),
 	designerButtonElement: {
-		icon: MdTextFields,
-		label: 'Text field',
+		icon: BsFillCalendarDateFill,
+		label: 'Date field',
 	},
 	DesignerComponent: ({ elementInstance }) => {
 		const {
-			extraAttributes: { label, required, placeholder, description },
+			extraAttributes: { label, required, description },
 		} = elementInstance as CustomInstance;
 		return (
 			<div className='flex w-full flex-col gap-2'>
@@ -51,7 +54,10 @@ export const TextField: FormElement = {
 					{label}
 					{required && '*'}
 				</Label>
-				<Input readOnly disabled placeholder={placeholder} />
+				<Button variant='outline' className='w-full justify-start text-left font-normal'>
+					<CalendarIcon className='mr-2 size-4' />
+					<span>Pick a date</span>
+				</Button>
 				{description && <p className='text-[0.8rem] text-muted-foreground'>{description}</p>}
 			</div>
 		);
@@ -59,27 +65,29 @@ export const TextField: FormElement = {
 	FormComponent: ({ elementInstance, isInvalid, defaultValue, submitValue }) => {
 		const {
 			id,
-			extraAttributes: { label, required, placeholder, description },
+			extraAttributes: { label, required, description },
 		} = elementInstance as CustomInstance;
-		const [value, setValue] = useState(defaultValue || '');
+		const [date, setDate] = useState<Date | undefined>(defaultValue ? new Date(defaultValue) : undefined);
 		const [error, setError] = useState(false);
 
 		useEffect(() => {
 			setError(isInvalid!);
 		}, [isInvalid]);
 
-		const onBlur = (e: React.FocusEvent<HTMLInputElement, Element>) => {
+		const onSelect = (date: Date | undefined) => {
+			setDate(date);
 			if (!submitValue) {
 				return;
 			}
 
-			const valid = TextField.validate(elementInstance, e.target.value);
+			const value = date?.toUTCString() || '';
+			const valid = DateField.validate(elementInstance, value);
 			setError(!valid);
 			if (!valid) {
 				return;
 			}
 
-			submitValue(id, e.target.value);
+			submitValue(id, value);
 		};
 
 		return (
@@ -88,13 +96,22 @@ export const TextField: FormElement = {
 					{label}
 					{required && '*'}
 				</Label>
-				<Input
-					className={cn({ 'text-red-500': error })}
-					placeholder={placeholder}
-					value={value}
-					onChange={(e) => setValue(e.target.value)}
-					onBlur={onBlur}
-				/>
+				<Popover>
+					<PopoverTrigger asChild>
+						<Button
+							variant='outline'
+							className={cn('w-full justify-start text-left font-normal', {
+								'text-muted-foreground': !date,
+								'text-red-500': error,
+							})}>
+							<CalendarIcon className='mr-2 size-4' />
+							{date ? moment(date).format('LL') : <span>Pick a date</span>}
+						</Button>
+					</PopoverTrigger>
+					<PopoverContent className='w-auto p-0' align='start'>
+						<Calendar mode='single' initialFocus selected={date} onSelect={onSelect} />
+					</PopoverContent>
+				</Popover>
 				{description && (
 					<p className={cn('text-[0.8rem] text-muted-foreground', { 'text-red-500': error })}>
 						{description}
@@ -107,7 +124,7 @@ export const TextField: FormElement = {
 		const element = elementInstance as CustomInstance;
 		const {
 			id,
-			extraAttributes: { label, description, required, placeholder },
+			extraAttributes: { label, description, required },
 		} = element;
 		const form = useForm<PropertiesSchema>({
 			resolver: zodResolver(propertiesSchema),
@@ -115,7 +132,6 @@ export const TextField: FormElement = {
 			defaultValues: {
 				label,
 				description,
-				placeholder,
 				required,
 			},
 		});
@@ -148,20 +164,6 @@ export const TextField: FormElement = {
 									The label of the field <br />
 									It will be displayed above the field
 								</FormDescription>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={control}
-						name='placeholder'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Placeholder</FormLabel>
-								<FormControl>
-									<Input {...field} onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()} />
-								</FormControl>
-								<FormDescription>The placeholder of the field</FormDescription>
 								<FormMessage />
 							</FormItem>
 						)}
