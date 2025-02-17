@@ -2,7 +2,6 @@ import { NextPage } from 'next';
 import { notFound } from 'next/navigation';
 import { getFormWithSubmissions } from '@/actions/form';
 import { ElementsType, FormElementInstance } from './formBuilder/formElements/types';
-import { CustomInstance as TextFieldCustomInstance } from './formBuilder/formElements/TextField';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import moment from 'moment';
 import { RowCell } from './RowCell';
@@ -32,22 +31,21 @@ const SubmissionsTable: NextPage<Props> = async ({ id }) => {
 	const columns: Column[] = [];
 
 	for (const formElement of formElements) {
-		const { type } = formElement;
+		const { id, type } = formElement;
 		switch (type) {
 			case 'text':
-				{
-					const element = formElement as TextFieldCustomInstance;
-					const {
-						id,
-						extraAttributes: { label, required },
-					} = element;
-					columns.push({
-						id,
-						type,
-						label,
-						required,
-					});
-				}
+			case 'number':
+			case 'textarea':
+			case 'date':
+			case 'checkbox':
+				columns.push({
+					id,
+					type,
+					//@ts-expect-error existing attribute
+					label: formElement.extraAttributes?.label,
+					//@ts-expect-error existing attribute
+					required: formElement.extraAttributes?.required,
+				});
 				break;
 			default:
 				break;
