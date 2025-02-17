@@ -1,13 +1,18 @@
-import { getFormStatus } from '@/actions/form';
-import { NextPage } from 'next';
-import { IStatCard, StatCard } from './StatCard';
+import React from 'react';
 import { LuView } from 'react-icons/lu';
 import { FaWpforms } from 'react-icons/fa';
 import { HiCursorClick } from 'react-icons/hi';
 import { TbArrowBounce } from 'react-icons/tb';
+import { IStatCard, StatCard } from './StatCard';
 
-const StatCards: NextPage = async () => {
-	const { visits, submissions, submissionRate, bounceRate } = await getFormStatus();
+interface Props {
+	visits: number;
+	submissions: number;
+}
+
+export const StatCards: React.FC<Props> = async ({ visits, submissions }) => {
+	const submissionRate = visits > 0 ? (submissions / visits) * 100 : 0;
+	const bounceRate = 100 - submissionRate;
 
 	const cards: IStatCard[] = [
 		{
@@ -38,5 +43,3 @@ const StatCards: NextPage = async () => {
 
 	return cards.map((card) => <StatCard key={card.title} {...card} />);
 };
-
-export default StatCards;

@@ -1,11 +1,11 @@
 import { NextPage } from 'next';
 import { Suspense } from 'react';
-import { CreateForm } from '@/components/shared/profile/CreateForm';
-import { FormCardsSkeleton } from '@/components/shared/profile/FormCardsSkeleton';
-import StatCards from '@/components/shared/profile/StatCards';
-import { StatCardsSkeleton } from '@/components/shared/profile/StatCardsSkeleton';
+import { CreateForm } from '@/components/shared/CreateForm';
+import { FormCardsSkeleton } from '@/components/shared/FormCardsSkeleton';
+import { StatCardsSkeleton } from '@/components/shared/StatCardsSkeleton';
 import { Separator } from '@/components/ui/separator';
-import FormCards from '@/components/shared/profile/FormCards';
+import FormCards from '@/components/shared/FormCards';
+import StatCards from './_components/StatCards';
 
 const Page: NextPage = () => {
 	return (

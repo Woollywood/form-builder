@@ -17,10 +17,8 @@ export const getFormStatus = async () => {
 
 	const visits = stats._sum.visits || 0;
 	const submissions = stats._sum.submissions || 0;
-	const submissionRate = visits > 0 ? (submissions / visits) * 100 : 0;
-	const bounceRate = 100 - submissionRate;
 
-	return { visits, submissions, submissionRate, bounceRate };
+	return { visits, submissions };
 };
 
 export const createForm = async (values: CreateFormSchema) => {
