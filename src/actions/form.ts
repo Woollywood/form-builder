@@ -3,6 +3,7 @@
 import { checkUser } from '@/helpers/auth';
 import { prisma } from '@/lib/prisma';
 import { createFormSchema, CreateFormSchema } from '@/schemas/CreateForm';
+import { revalidatePath } from 'next/cache';
 
 export const getFormStatus = async () => {
 	const { id: userId } = await checkUser();
@@ -16,10 +17,8 @@ export const getFormStatus = async () => {
 
 	const visits = stats._sum.visits || 0;
 	const submissions = stats._sum.submissions || 0;
-	const submissionRate = visits > 0 ? (submissions / visits) * 100 : 0;
-	const bounceRate = 100 - submissionRate;
 
-	return { visits, submissions, submissionRate, bounceRate };
+	return { visits, submissions };
 };
 
 export const createForm = async (values: CreateFormSchema) => {
@@ -39,6 +38,7 @@ export const createForm = async (values: CreateFormSchema) => {
 		throw new Error('Something went wrong');
 	}
 
+	revalidatePath('/', 'layout');
 	return form;
 };
 
@@ -52,4 +52,55 @@ export const getFormById = async (id: string) => {
 	const { id: userId } = await checkUser();
 
 	return await prisma.form.findUnique({ where: { id, userId } });
+};
+
+export const updateFormContent = async (id: string, jsonContent: string) => {
+	const { id: userId } = await checkUser();
+
+	return await prisma.form.update({
+		where: { userId, id },
+		data: {
+			content: jsonContent,
+		},
+	});
+};
+
+export const publishForm = async (id: string) => {
+	const { id: userId } = await checkUser();
+
+	const data = await prisma.form.update({
+		where: { id, userId },
+		data: {
+			published: true,
+		},
+	});
+	revalidatePath('/', 'layout');
+	return data;
+};
+
+export const getFormContentByURL = async (url: string) => {
+	return await prisma.form.update({
+		select: { content: true },
+		data: { visits: { increment: 1 } },
+		where: { shareURL: url },
+	});
+};
+
+export const submitForm = async (formURL: string, content: string) => {
+	return await prisma.form.update({
+		data: { submissions: { increment: 1 }, FormSubmissions: { create: { content } } },
+		where: { shareURL: formURL, published: true },
+	});
+};
+
+export const getFormWithSubmissions = async (id: string) => {
+	const { id: userId } = await checkUser();
+
+	return await prisma.form.findUnique({
+		where: {
+			userId,
+			id,
+		},
+		include: { FormSubmissions: true },
+	});
 };

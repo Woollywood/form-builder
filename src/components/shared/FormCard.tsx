@@ -31,7 +31,7 @@ export const FormCard: React.FC<FormCardProps> = ({
 				<CardDescription className='flex items-center justify-between text-sm text-muted-foreground'>
 					{moment(createdAt).fromNow()}
 					{published && (
-						<span>
+						<span className='flex items-center gap-1.5'>
 							<LuView className='text-muted-foreground' />
 							<span>{visits}</span>
 							<FaWpforms className='text-muted-foreground' />

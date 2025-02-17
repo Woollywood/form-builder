@@ -2,6 +2,7 @@ import React from 'react';
 import { IconType } from 'react-icons/lib';
 
 export type ElementsType = 'text';
+export type SubmitFunction = (key: string, value: string) => void;
 export interface FormElement {
 	type: ElementsType;
 	construct: (id: string) => FormElementInstance;
@@ -10,8 +11,14 @@ export interface FormElement {
 		label: string;
 	};
 	DesignerComponent: React.FC<{ elementInstance: FormElementInstance }>;
-	FormComponent: React.FC;
+	FormComponent: React.FC<{
+		elementInstance: FormElementInstance;
+		submitValue?: SubmitFunction;
+		isInvalid?: boolean;
+		defaultValue?: string;
+	}>;
 	PropertiesComponent: React.FC<{ elementInstance: FormElementInstance }>;
+	validate: (formElement: FormElementInstance, currentValue: string) => boolean;
 }
 export interface FormElementInstance {
 	id: string;

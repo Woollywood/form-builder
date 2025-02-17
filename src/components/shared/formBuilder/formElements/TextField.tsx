@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdTextFields } from 'react-icons/md';
 import { z } from 'zod';
 import { ElementsType, FormElement, FormElementInstance } from './types';
@@ -12,6 +12,7 @@ import { formBuilderStore } from '../store';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { cn } from '@/lib/utils';
 
 const extraAttributes = {
 	label: 'Text field',
@@ -55,7 +56,53 @@ export const TextField: FormElement = {
 			</div>
 		);
 	},
-	FormComponent: () => <div>Form component</div>,
+	FormComponent: ({ elementInstance, isInvalid, defaultValue, submitValue }) => {
+		const {
+			id,
+			extraAttributes: { label, required, placeholder, description },
+		} = elementInstance as CustomInstance;
+		const [value, setValue] = useState(defaultValue || '');
+		const [error, setError] = useState(false);
+
+		useEffect(() => {
+			setError(isInvalid!);
+		}, [isInvalid]);
+
+		const onBlur = (e: React.FocusEvent<HTMLInputElement, Element>) => {
+			if (!submitValue) {
+				return;
+			}
+
+			const valid = TextField.validate(elementInstance, e.target.value);
+			setError(!valid);
+			if (!valid) {
+				return;
+			}
+
+			submitValue(id, e.target.value);
+		};
+
+		return (
+			<div className='flex w-full flex-col gap-2'>
+				<Label className={cn({ 'text-red-500': error })}>
+					{label}
+					{required && '*'}
+				</Label>
+				<Input
+					className={cn({ 'text-red-500': error })}
+					placeholder={placeholder}
+					value={value}
+					onChange={(e) => setValue(e.target.value)}
+					onBlur={onBlur}
+				/>
+				{description && (
+					<p className={cn('text-[0.8rem] text-muted-foreground', { 'text-red-500': error })}>
+						{description}
+					</p>
+				)}
+			</div>
+		);
+	},
 	PropertiesComponent: ({ elementInstance }) => {
 		const element = elementInstance as CustomInstance;
 		const {
@@ -160,6 +207,15 @@ export const TextField: FormElement = {
 				</form>
 			</Form>
 		);
+	},
+	validate: (formElement, currentValue) => {
+		const {
+			extraAttributes: { required },
+		} = formElement as CustomInstance;
+		if (required) {
+			return currentValue.trim().length > 0;
+		}
+		return true;
 	},
 };
 
