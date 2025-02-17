@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import { Form } from '@prisma/client';
 import { DndContext, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { PreviewDialogButton } from './PreviewDialogButton';
@@ -8,13 +8,21 @@ import { SaveFormButton } from './SaveFormButton';
 import { PublishFormButton } from './PublishFormButton';
 import { Designer } from './Designer';
 import { DragOverlayWrapper } from './DragOverlayWrapper';
+import { formBuilderStore } from './store';
 
 type Props = Form;
 
-export const FormBuilder: React.FC<Props> = ({ name, published }) => {
+export const FormBuilder: React.FC<Props> = ({ name, published, content }) => {
 	const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 10 } });
 	const touchSensor = useSensor(TouchSensor, { activationConstraint: { delay: 300, tolerance: 5 } });
 	const sensors = useSensors(mouseSensor, touchSensor);
+
+	useLayoutEffect(() => {
+		if (content) {
+			const elements = JSON.parse(content);
+			formBuilderStore.elements = elements;
+		}
+	}, [content]);
 
 	return (
 		<DndContext sensors={sensors}>
@@ -26,7 +34,7 @@ export const FormBuilder: React.FC<Props> = ({ name, published }) => {
 					</h2>
 					<div className='flex items-center gap-2'>
 						<PreviewDialogButton />
-						{published && (
+						{!published && (
 							<>
 								<SaveFormButton />
 								<PublishFormButton />

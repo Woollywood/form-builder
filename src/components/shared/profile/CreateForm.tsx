@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useTransition } from 'react';
+import React, { useState, useTransition } from 'react';
 import {
 	Dialog,
 	DialogContent,
@@ -20,10 +20,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useHandleError } from '@/hooks/useHandleError';
 import { createFormSchema, CreateFormSchema } from '@/schemas/CreateForm';
-import { createForm } from '@/actions/form';
+import { createForm, getForms } from '@/actions/form';
 import { useToast } from '@/hooks/use-toast';
 
 export const CreateForm: React.FC = () => {
+	const [open, setOpen] = useState(false);
+
 	const form = useForm<CreateFormSchema>({
 		resolver: zodResolver(createFormSchema),
 		defaultValues: {
@@ -31,7 +33,7 @@ export const CreateForm: React.FC = () => {
 			description: '',
 		},
 	});
-	const { control } = form;
+	const { control, reset } = form;
 
 	const { toast } = useToast();
 	const { handleError } = useHandleError();
@@ -40,6 +42,9 @@ export const CreateForm: React.FC = () => {
 		startTransition(async () => {
 			try {
 				await createForm(values);
+				await getForms();
+				setOpen(false);
+				reset();
 				toast({
 					title: 'Success',
 					description: 'Form created successfully',
@@ -51,11 +56,11 @@ export const CreateForm: React.FC = () => {
 	};
 
 	return (
-		<Dialog>
+		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				<Button
 					variant='outline'
-					className='min-h-form-card-min-height group flex flex-col items-center justify-center gap-4 border border-dashed border-primary/20 hover:cursor-pointer hover:border-primary'>
+					className='group flex min-h-form-card-min-height flex-col items-center justify-center gap-4 border border-dashed border-primary/20 hover:cursor-pointer hover:border-primary'>
 					<BsFileEarmarkPlus className='h-8 w-8 text-muted-foreground group-hover:text-primary' />
 					<p className='text-xl font-bold text-muted-foreground group-hover:text-primary'>Create new form</p>
 				</Button>

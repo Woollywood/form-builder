@@ -3,6 +3,7 @@
 import { checkUser } from '@/helpers/auth';
 import { prisma } from '@/lib/prisma';
 import { createFormSchema, CreateFormSchema } from '@/schemas/CreateForm';
+import { revalidatePath } from 'next/cache';
 
 export const getFormStatus = async () => {
 	const { id: userId } = await checkUser();
@@ -39,6 +40,7 @@ export const createForm = async (values: CreateFormSchema) => {
 		throw new Error('Something went wrong');
 	}
 
+	revalidatePath('/', 'layout');
 	return form;
 };
 
@@ -52,4 +54,28 @@ export const getFormById = async (id: string) => {
 	const { id: userId } = await checkUser();
 
 	return await prisma.form.findUnique({ where: { id, userId } });
+};
+
+export const updateFormContent = async (id: string, jsonContent: string) => {
+	const { id: userId } = await checkUser();
+
+	return await prisma.form.update({
+		where: { userId, id },
+		data: {
+			content: jsonContent,
+		},
+	});
+};
+
+export const publishForm = async (id: string) => {
+	const { id: userId } = await checkUser();
+
+	const data = await prisma.form.update({
+		where: { id, userId },
+		data: {
+			published: true,
+		},
+	});
+	revalidatePath('/', 'layout');
+	return data;
 };

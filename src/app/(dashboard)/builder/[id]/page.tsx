@@ -1,5 +1,6 @@
 import { getFormById } from '@/actions/form';
 import { FormBuilder } from '@/components/shared/formBuilder';
+import { Congrats } from '@/components/shared/formBuilder/Congrats';
 import { NextPage } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -14,7 +15,8 @@ const Page: NextPage<Props> = async ({ params }) => {
 		notFound();
 	}
 
-	return <FormBuilder {...form} />;
+	const { published } = form;
+	return published ? <Congrats {...form} /> : <FormBuilder {...form} />;
 };
 
 export default Page;

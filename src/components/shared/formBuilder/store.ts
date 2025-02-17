@@ -25,6 +25,10 @@ class Store {
 		return this._elements;
 	}
 
+	set elements(elements: FormElementInstance[]) {
+		this._elements = elements;
+	}
+
 	set selectedElement(element: FormElementInstance | null) {
 		this._selectedElement = element;
 	}
