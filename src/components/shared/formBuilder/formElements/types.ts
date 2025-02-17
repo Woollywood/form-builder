@@ -10,7 +10,7 @@ export interface FormElement {
 		label: string;
 	};
 	DesignerComponent: React.FC<{ elementInstance: FormElementInstance }>;
-	FormComponent: React.FC;
+	FormComponent: React.FC<{ elementInstance: FormElementInstance }>;
 	PropertiesComponent: React.FC<{ elementInstance: FormElementInstance }>;
 }
 export interface FormElementInstance {

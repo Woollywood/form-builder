@@ -55,7 +55,21 @@ export const TextField: FormElement = {
 			</div>
 		);
 	},
-	FormComponent: () => <div>Form component</div>,
+	FormComponent: ({ elementInstance }) => {
+		const {
+			extraAttributes: { label, required, placeholder, description },
+		} = elementInstance as CustomInstance;
+		return (
+			<div className='flex w-full flex-col gap-2'>
+				<Label>
+					{label}
+					{required && '*'}
+				</Label>
+				<Input placeholder={placeholder} />
+				{description && <p className='text-[0.8rem] text-muted-foreground'>{description}</p>}
+			</div>
+		);
+	},
 	PropertiesComponent: ({ elementInstance }) => {
 		const element = elementInstance as CustomInstance;
 		const {
