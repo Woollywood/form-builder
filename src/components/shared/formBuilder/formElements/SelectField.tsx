@@ -20,7 +20,7 @@ import { AiOutlineClose, AiOutlinePlus } from 'react-icons/ai';
 import { useToast } from '@/hooks/use-toast';
 
 const extraAttributes = {
-	label: 'Text field',
+	label: 'Select field',
 	description: 'Description',
 	required: false,
 	placeholder: 'Value here...',
