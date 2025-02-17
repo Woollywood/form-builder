@@ -89,6 +89,6 @@ export const getFormContentByURL = async (url: string) => {
 export const submitForm = async (formURL: string, content: string) => {
 	return await prisma.form.update({
 		data: { submissions: { increment: 1 }, FormSubmissions: { create: { content } } },
-		where: { shareURL: formURL },
+		where: { shareURL: formURL, published: true },
 	});
 };
