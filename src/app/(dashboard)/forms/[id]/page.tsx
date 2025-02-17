@@ -4,6 +4,9 @@ import { getFormById } from '@/actions/form';
 import { Visit } from '@/components/shared/Visit';
 import { FormLinkShare } from '@/components/shared/FormLinkShare';
 import { StatCards } from '@/components/shared/StatCards';
+import SubmissionsTable from '@/components/shared/SubmissionsTable';
+import { Suspense } from 'react';
+import { SubmissionsTableSkeleton } from '@/components/shared/SubmissionsTableSkeleton';
 
 interface Props {
 	params: Promise<{ id: string }>;
@@ -28,8 +31,14 @@ const Page: NextPage<Props> = async ({ params }) => {
 					<FormLinkShare shareURL={shareURL} />
 				</div>
 			</div>
-			<div className='grid w-full grid-cols-1 gap-4 pt-8 md:grid-cols-2 lg:grid-cols-4'>
+			<div className='mb-8 grid w-full grid-cols-1 gap-4 pt-8 md:grid-cols-2 lg:grid-cols-4'>
 				<StatCards visits={visits} submissions={submissions} />
+			</div>
+			<div>
+				<h1 className='my-4 text-2xl font-bold'>Submissions</h1>
+				<Suspense fallback={<SubmissionsTableSkeleton />}>
+					<SubmissionsTable id={id} />
+				</Suspense>
 			</div>
 		</div>
 	);

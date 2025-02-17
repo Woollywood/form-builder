@@ -92,3 +92,15 @@ export const submitForm = async (formURL: string, content: string) => {
 		where: { shareURL: formURL, published: true },
 	});
 };
+
+export const getFormWithSubmissions = async (id: string) => {
+	const { id: userId } = await checkUser();
+
+	return await prisma.form.findUnique({
+		where: {
+			userId,
+			id,
+		},
+		include: { FormSubmissions: true },
+	});
+};
