@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconType } from 'react-icons/lib';
 
-export type ElementsType = 'text';
+export type ElementsType = 'text' | 'title';
 export type SubmitFunction = (key: string, value: string) => void;
 export interface FormElement {
 	type: ElementsType;
