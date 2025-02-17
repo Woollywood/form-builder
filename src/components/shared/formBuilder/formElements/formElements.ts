@@ -5,18 +5,27 @@ import { SubtitleField } from './SubtitleField';
 import { ParagraphField } from './ParagraphField';
 import { Separator } from './Separator';
 import { SpacerField } from './SpacerField';
+import { NumberField } from './NumberField';
+import { TextareaField } from './TextareaField';
+import { DateField } from './DateField';
+import { SelectField } from './SelectField';
 
 export const formElements: FormElementsType = {
-	text: TextField,
 	title: TitleField,
 	subtitle: SubtitleField,
 	paragraph: ParagraphField,
 	separator: Separator,
 	spacer: SpacerField,
+
+	text: TextField,
+	number: NumberField,
+	textarea: TextareaField,
+	date: DateField,
+	select: SelectField,
 };
 
 export type LayoutElements = Extract<ElementsType, 'title' | 'subtitle' | 'paragraph' | 'separator' | 'spacer'>;
-export type FormElements = Extract<ElementsType, 'text'>;
+export type FormElements = Extract<ElementsType, 'text' | 'number' | 'textarea' | 'date' | 'select'>;
 export interface Section<T extends string> {
 	label: string;
 	elements: Record<T, FormElement>;
@@ -34,5 +43,14 @@ export const sections: SidebarSections = [
 			spacer: SpacerField,
 		},
 	},
-	{ label: 'Form elements', elements: { text: TextField } },
+	{
+		label: 'Form elements',
+		elements: {
+			text: TextField,
+			number: NumberField,
+			textarea: TextareaField,
+			date: DateField,
+			select: SelectField,
+		},
+	},
 ];
